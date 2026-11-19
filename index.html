@@ -63,6 +63,12 @@
       font-size: 16px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      overflow-x: clip;
+    }
+
+    body {
+      overflow-x: clip;
+      max-width: 100%;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -2823,9 +2829,62 @@
       .header-coords {
         display: none;
       }
+
+      .hero-main-grid > *,
+      .scrolly-workspace > *,
+      .transition-header-grid > *,
+      .work-intro-grid > *,
+      .about-statement-banner > *,
+      .about-three-col > *,
+      .contact-grid > * {
+        min-width: 0;
+      }
     }
 
     @media (max-width: 720px) {
+      :root {
+        --header-h: 92px;
+      }
+      .site-header {
+        height: auto;
+      }
+      .header-grid {
+        grid-template-columns: 1fr auto;
+        height: auto;
+      }
+      .header-brand {
+        padding: 10px 14px;
+        font-size: 1.25rem;
+        border-right: none;
+      }
+      .header-cta {
+        padding: 10px 14px;
+        font-size: 0.7rem;
+      }
+      .header-nav {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        border-top: var(--grid-line);
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .nav-link {
+        padding: 9px 12px;
+        font-size: 0.68rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border-left: var(--grid-line);
+      }
+      .nav-link:first-child {
+        border-left: none;
+      }
+
+      .section-strip {
+        padding: 10px 16px;
+        font-size: 0.66rem;
+        gap: 6px;
+      }
       .hero-kicker-bar,
       .hero-identity-col,
       .hero-narrative-zone,
@@ -2833,14 +2892,34 @@
       .transition-title-cell,
       .transition-controls-cell,
       .project-story-block,
+      .about-statement-banner,
       .about-col,
       .contact-left {
         padding: 24px 20px;
+      }
+      .hero-name-display {
+        font-size: clamp(3.9rem, 19vw, 5.4rem);
+      }
+      .hero-availability-line {
+        flex-wrap: wrap;
+        line-height: 1.45;
+      }
+      .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .hero-actions .btn-brut {
+        width: 100%;
+        justify-content: space-between;
+        min-height: 44px;
+        padding: 12px 16px;
+        font-size: 0.75rem;
       }
       .hero-spec-strip {
         grid-template-columns: 1fr;
       }
       .hero-spec-cell {
+        padding: 14px 20px;
         border-right: none;
         border-bottom: var(--grid-line);
       }
@@ -2851,6 +2930,61 @@
       .curtain-panel.bottom {
         padding-left: 20px;
         padding-right: 20px;
+      }
+
+      .wb-active-work-bar {
+        flex-wrap: wrap;
+        padding: 10px 14px;
+        font-size: 0.66rem;
+        gap: 6px;
+      }
+      .wb-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+      .wb-project-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+      .wb-proj-tab {
+        padding: 8px 6px;
+        font-size: 0.66rem;
+        text-align: center;
+      }
+      .wb-mode-controls {
+        justify-content: flex-end;
+      }
+      .wb-stage-body {
+        padding: 14px;
+      }
+      .dash-tabs-row {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+      }
+      .dash-sub-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 0.68rem;
+        padding: 7px 10px;
+      }
+      .viz-panel {
+        padding: 14px;
+        border-radius: 14px;
+      }
+      .month-chart-stage {
+        gap: 3px;
+        height: 150px;
+        padding: 12px 6px 6px;
+      }
+      .viz-panel table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
 
       .dash-kpi-grid {
@@ -2870,6 +3004,36 @@
       .idx-action {
         grid-column: span 2;
         justify-self: start;
+      }
+
+      .contact-headline {
+        font-size: clamp(2.6rem, 13vw, 3.8rem);
+      }
+      .contact-row-cell {
+        padding: 18px 20px;
+      }
+      .contact-val {
+        font-size: 0.9rem;
+        word-break: break-word;
+      }
+      .contact-cv-block {
+        padding: 24px 20px;
+      }
+      .site-footer {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .modal-backdrop {
+        padding: 12px;
+      }
+      .modal-sheet {
+        max-height: 92vh;
+        box-shadow: 6px 6px 0 var(--coral);
+      }
+      .modal-header {
+        padding: 14px 16px;
       }
     }
   </style>
