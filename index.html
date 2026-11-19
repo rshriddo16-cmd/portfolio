@@ -5786,8 +5786,7 @@
       stage.style.zoom = '1';
       var h1 = document.getElementById('wbActiveWorkHeader');
       var h2 = document.querySelector('.wb-topbar');
-      var h3 = document.getElementById('wbStatusBanner');
-      var chromeH = (h1 ? h1.offsetHeight : 30) + (h2 ? h2.offsetHeight : 42) + (h3 ? h3.offsetHeight : 30);
+      var chromeH = (h1 ? h1.offsetHeight : 30) + (h2 ? h2.offsetHeight : 42);
       var availH = (window.innerHeight - 58) - chromeH - 4;
       var naturalH = stage.scrollHeight;
       if (naturalH > availH && availH > 300) {
