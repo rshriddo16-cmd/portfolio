@@ -291,7 +291,8 @@
     /* ARCHITECTURAL PAGE SHELL */
     .page-shell {
       max-width: 1520px;
-      margin: var(--header-h) auto 0;
+      margin: 0 auto;
+      padding-top: var(--header-h);
       border-left: var(--grid-line);
       border-right: var(--grid-line);
       background: var(--bg-ivory);
@@ -3034,6 +3035,18 @@
       }
       .modal-header {
         padding: 14px 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-link {
+        padding: 9px 8px;
+        font-size: 0.64rem;
+        flex: 1 0 auto;
+        justify-content: center;
+      }
+      .nav-link .nav-num {
+        display: none;
       }
     }
   </style>
