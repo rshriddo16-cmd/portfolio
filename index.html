@@ -156,7 +156,7 @@
 
     .header-grid {
       display: grid;
-      grid-template-columns: auto auto 1fr auto;
+      grid-template-columns: auto 1fr auto auto;
       height: calc(var(--header-h) - 3px);
       align-items: stretch;
     }
@@ -228,6 +228,9 @@
       letter-spacing: 0.04em;
       transition: background-color 0.15s ease, color 0.15s ease;
     }
+    .nav-link:first-child {
+      border-left: none;
+    }
 
     .nav-link:hover {
       background-color: var(--bg-stone);
@@ -256,7 +259,7 @@
       cursor: pointer;
       border-top: none;
       border-bottom: none;
-      border-left: none;
+      border-left: var(--grid-line);
       transition: background-color 0.15s ease, color 0.15s ease;
     }
     .header-cta:hover {
