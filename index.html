@@ -156,7 +156,7 @@
 
     .header-grid {
       display: grid;
-      grid-template-columns: auto auto 1fr auto auto;
+      grid-template-columns: auto auto 1fr auto;
       height: calc(var(--header-h) - 3px);
       align-items: stretch;
     }
@@ -245,20 +245,6 @@
     }
     .nav-link.active .nav-num {
       color: var(--yellow);
-    }
-
-    .header-mode-indicator {
-      border-right: var(--grid-line);
-      background: var(--bg-stone);
-      gap: 8px;
-      cursor: pointer;
-      border-top: none;
-      border-bottom: none;
-      border-left: none;
-    }
-    .header-mode-indicator.explore-locked {
-      background: var(--yellow);
-      color: var(--ink);
     }
 
     .header-cta {
@@ -2920,9 +2906,6 @@
         <a href="#about" class="nav-link" data-sec="about"><span class="nav-num">04</span>TOOLKIT &amp; CV</a>
         <a href="#contact" class="nav-link" data-sec="contact"><span class="nav-num">05</span>CONTACT</a>
       </nav>
-      <button type="button" class="header-cell header-mode-indicator" id="headerSyncToggle" title="Toggle between scroll-driven story sync and manual dashboard exploration">
-        <span id="headerSyncLabel">STORY SYNC: ON</span>
-      </button>
       <button type="button" class="header-cell header-cta" onclick="downloadSuppliedCV()">
         <span>DOWNLOAD CV ↓</span>
       </button>
@@ -3465,22 +3448,10 @@
             </div>
 
             <div class="wb-mode-controls">
-              <button type="button" class="wb-explore-btn" id="wbExploreToggleBtn" onclick="toggleExploreMode()">
-                ⏸ EXPLORE DASHBOARD MODE
-              </button>
               <button type="button" class="wb-reset-btn" onclick="resetActiveDashboard()" title="Restore initial dashboard state">
                 RESET ↺
               </button>
             </div>
-          </div>
-
-          <!-- Status Banner showing Scroll Sync vs Explore Mode -->
-          <div class="wb-status-banner" id="wbStatusBanner">
-            <div class="wb-status-text">
-              <span class="status-pulse" id="wbStatusDot"></span>
-              <span id="wbStatusText">STORY SYNC ACTIVE — Dashboard updates automatically as you scroll through each project step.</span>
-            </div>
-            <span class="wb-data-badge" id="wbDataBadge">EMPIRICAL + SIMULATION DATA</span>
           </div>
 
           <!-- WORKBENCH BODY -->
@@ -4463,11 +4434,10 @@
     }
 
     // =================================================================
-    // WORKBENCH STATE & EXPLORE DASHBOARD MODE
+    // WORKBENCH STATE
     // =================================================================
     var WB_STATE = {
       activeProject: 'transit',
-      exploreLocked: false,
       transit: {
         view: 'paradox',
         tierFilter: 'all',
@@ -4493,50 +4463,8 @@
       }
     };
 
-    function updateExploreBannerUI() {
-      var btn = document.getElementById('wbExploreToggleBtn');
-      var banner = document.getElementById('wbStatusBanner');
-      var txt = document.getElementById('wbStatusText');
-      var hBtn = document.getElementById('headerSyncToggle');
-      var hLbl = document.getElementById('headerSyncLabel');
-
-      if (WB_STATE.exploreLocked) {
-        btn.innerHTML = '▶ RESUME STORY SYNC';
-        btn.classList.add('locked');
-        banner.classList.add('explore-active');
-        txt.innerHTML = '<strong>EXPLORE DASHBOARD MODE ACTIVE</strong> — Scroll-driven updates paused while you interact. Click "Resume Story Sync" anytime.';
-        if (hBtn) hBtn.classList.add('explore-locked');
-        if (hLbl) hLbl.textContent = 'EXPLORE MODE (PAUSED)';
-      } else {
-        btn.innerHTML = '⏸ EXPLORE DASHBOARD MODE';
-        btn.classList.remove('locked');
-        banner.classList.remove('explore-active');
-        txt.innerHTML = '<strong>STORY SYNC ACTIVE</strong> — Dashboard updates automatically as you scroll through each project step.';
-        if (hBtn) hBtn.classList.remove('explore-locked');
-        if (hLbl) hLbl.textContent = 'STORY SYNC: ON';
-      }
-    }
-
-    function toggleExploreMode(forceState) {
-      if (typeof forceState === 'boolean') {
-        WB_STATE.exploreLocked = forceState;
-      } else {
-        WB_STATE.exploreLocked = !WB_STATE.exploreLocked;
-      }
-      updateExploreBannerUI();
-      showToast(WB_STATE.exploreLocked ? 'EXPLORE MODE ENABLED — SCROLL SYNC PAUSED' : 'STORY SYNC RESUMED');
-    }
-
-    var headerToggleEl = document.getElementById('headerSyncToggle');
-    if (headerToggleEl) {
-      headerToggleEl.addEventListener('click', function() {
-        toggleExploreMode();
-      });
-    }
-
     function activateExploreModeFor(proj) {
       switchActiveProjectPane(proj, 1);
-      toggleExploreMode(true);
       var wb = document.getElementById('stickyWorkbench');
       if (wb && window.innerWidth < 1120) {
         wb.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -4545,7 +4473,6 @@
 
     function userSelectProject(proj) {
       switchActiveProjectPane(proj, 1);
-      toggleExploreMode(true);
     }
 
     function jumpToProject(proj) {
@@ -5623,11 +5550,6 @@
         c.classList.toggle('active-step', match);
       });
 
-      // If Explore Mode is locked and this came from passive scroll (not clicking a story step card), do not overwrite dashboard
-      if (WB_STATE.exploreLocked && !isManualCardClick) {
-        return;
-      }
-
       switchActiveProjectPane(proj, stepNum);
 
       if (proj === 'transit') {
@@ -5778,11 +5700,6 @@
             activeProj = 'tourmate';
           }
         }
-      }
-
-      if (activeProj !== LAST_SYNCED_PROJ) {
-        WB_STATE.exploreLocked = false;
-        updateExploreBannerUI();
       }
 
       // 2. Find the closest narrative step card within the active project block & apply smooth proximity opacity
