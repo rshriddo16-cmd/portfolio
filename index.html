@@ -298,6 +298,13 @@
       background: var(--bg-ivory);
     }
 
+    section[id],
+    .project-story-block,
+    #stickyWorkbench,
+    .narrative-step-card {
+      scroll-margin-top: var(--header-h);
+    }
+
     /* SECTION MICRO-STRIP */
     .section-strip {
       display: flex;
@@ -2486,7 +2493,8 @@
       flex-direction: column;
       justify-content: space-between;
       transform-origin: top center;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .dashboard-pane {
@@ -2678,6 +2686,9 @@
       opacity: 1 !important;
       transform: translate3d(0, 0, 0) scale(1) !important;
     }
+    .narrative-step-card[data-scroll-reveal].is-inview {
+      opacity: 1;
+    }
 
     /* Section Strip Architectural Line Sweep on Scroll */
     .section-strip {
@@ -2844,22 +2855,23 @@
 
     @media (max-width: 720px) {
       :root {
-        --header-h: 92px;
+        --header-h: 90px;
       }
       .site-header {
-        height: auto;
+        height: var(--header-h);
       }
       .header-grid {
         grid-template-columns: 1fr auto;
-        height: auto;
+        grid-template-rows: 48px 39px;
+        height: 87px;
       }
       .header-brand {
-        padding: 10px 14px;
+        padding: 0 14px;
         font-size: 1.25rem;
         border-right: none;
       }
       .header-cta {
-        padding: 10px 14px;
+        padding: 0 14px;
         font-size: 0.7rem;
       }
       .header-nav {
@@ -2871,7 +2883,7 @@
         -webkit-overflow-scrolling: touch;
       }
       .nav-link {
-        padding: 9px 12px;
+        padding: 0 12px;
         font-size: 0.68rem;
         white-space: nowrap;
         flex-shrink: 0;
@@ -2902,8 +2914,11 @@
         font-size: clamp(3.9rem, 19vw, 5.4rem);
       }
       .hero-availability-line {
-        flex-wrap: wrap;
+        align-items: flex-start;
         line-height: 1.45;
+      }
+      .hero-availability-line .avail-dot {
+        margin-top: 5px;
       }
       .hero-actions {
         flex-direction: column;
@@ -2933,17 +2948,18 @@
         padding-right: 20px;
       }
 
+      .wb-active-work-header,
       .wb-active-work-bar {
         flex-wrap: wrap;
-        padding: 10px 14px;
-        font-size: 0.66rem;
+        padding: 10px 14px !important;
+        font-size: 0.66rem !important;
         gap: 6px;
       }
       .wb-topbar {
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
-        padding: 12px 14px;
+        gap: 10px !important;
+        padding: 12px 14px !important;
       }
       .wb-project-tabs {
         display: grid;
@@ -2951,27 +2967,27 @@
         gap: 6px;
       }
       .wb-proj-tab {
-        padding: 8px 6px;
-        font-size: 0.66rem;
+        padding: 8px 6px !important;
+        font-size: 0.66rem !important;
         text-align: center;
       }
       .wb-mode-controls {
         justify-content: flex-end;
       }
       .wb-stage-body {
-        padding: 14px;
+        padding: 14px !important;
       }
       .dash-tabs-row {
         overflow-x: auto;
         flex-wrap: nowrap;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 4px;
+        padding-bottom: 4px !important;
       }
-      .dash-sub-tab {
+      .dash-subtab {
         white-space: nowrap;
         flex-shrink: 0;
-        font-size: 0.68rem;
-        padding: 7px 10px;
+        font-size: 0.68rem !important;
+        padding: 7px 10px !important;
       }
       .viz-panel {
         padding: 14px;
@@ -3038,9 +3054,9 @@
       }
     }
 
-    @media (max-width: 480px) {
+      @media (max-width: 480px) {
       .nav-link {
-        padding: 9px 8px;
+        padding: 0 8px;
         font-size: 0.64rem;
         flex: 1 0 auto;
         justify-content: center;
@@ -4343,52 +4359,8 @@
     }
 
     // =================================================================
-    // HERO MINIMAL PREVIEW DATA & HANDLERS
+    // LANDING CURTAIN CONTROLLER
     // =================================================================
-    var ACTIVE_HERO_PROJECT = 'transit';
-
-    var HERO_PREVIEWS = {
-      transit: {
-        eyebrow: 'PROJECT 01 // CAPSTONE RESEARCH • DHAKA',
-        title: 'Why Cashless Transit Has Low Satisfaction',
-        summary: 'Commuters find tap and QR payments easy and fast, yet overall satisfaction is low because digital cards only work on isolated Metro routes—forcing riders back to cash for buses and rickshaws.',
-        num: '1.57<span style="font-size:0.45em;color:var(--taupe);">/5</span>',
-        label: 'Overall Satisfaction',
-        sub: 'Survey of 150+ Dhaka riders &amp; drivers',
-        bars: [
-          { name: 'Ease of Use', val: '3.6 / 5.0', pct: 72, color: 'var(--yellow)' },
-          { name: 'Time Saved', val: '3.6 / 5.0', pct: 71, color: 'var(--bg-ivory)' },
-          { name: 'Current Satisfaction', val: '1.6 / 5.0', pct: 31, color: 'var(--coral)' }
-        ]
-      },
-      climalert: {
-        eyebrow: 'PROJECT 02 // HEALTHCARE ANALYTICS • 8 DIVISIONS',
-        title: 'Predicting Disease Outbreaks From Weather',
-        summary: 'By matching 720 monthly health records with rainfall and temperature data, ClimAlert gives health teams a 6-to-8-week early warning before Dengue and winter outbreaks peak.',
-        num: '6–8<span style="font-size:0.42em;color:var(--taupe);"> WKS</span>',
-        label: 'Dengue Lead Warning',
-        sub: '720 records across 8 Bangladesh divisions',
-        bars: [
-          { name: 'Dengue ↔ Rainfall Link', val: 'r = +0.82', pct: 82, color: 'var(--coral)' },
-          { name: 'Nipah ↔ Cold Temp Link', val: 'r = -0.78', pct: 78, color: 'var(--yellow)' },
-          { name: 'Pneumonia ↔ Cold Link', val: 'r = -0.72', pct: 72, color: 'var(--bg-ivory)' }
-        ]
-      },
-      tourmate: {
-        eyebrow: 'PROJECT 03 // AI IN BUSINESS • BANGLADESH',
-        title: 'A-to-Z Group Trip Planning in One Prompt',
-        summary: 'Designed for Bangladeshi students and families who travel in groups. Enter a destination, budget, and group size in Bangla or English to get verified hotels, routes, and bKash cost splits.',
-        num: '97.7<span style="font-size:0.45em;color:var(--taupe);">%</span>',
-        label: 'Domestic Travel Focus',
-        sub: '~70% of local trips are group or family outings',
-        bars: [
-          { name: 'Domestic Market Share', val: '97.7%', pct: 97, color: 'var(--coral)' },
-          { name: 'Group & Family Trips', val: '~70%', pct: 70, color: 'var(--yellow)' },
-          { name: 'Verified Vendor Safety', val: '95 / 100', pct: 95, color: 'var(--bg-ivory)' }
-        ]
-      }
-    };
-
     function runLandingCurtain() {
       var curtain = document.getElementById('landingCurtain');
       var counter = document.getElementById('curtainCounter');
@@ -4430,47 +4402,6 @@
         }
       }
       requestAnimationFrame(step);
-    }
-
-    function setHeroPreview(key) {
-      var d = HERO_PREVIEWS[key];
-      if (!d) return;
-      ACTIVE_HERO_PROJECT = key;
-      var eyebrowEl = document.getElementById('heroSpotEyebrow');
-      if (!eyebrowEl) return;
-      ['transit', 'climalert', 'tourmate'].forEach(function(k) {
-        var t = document.getElementById('heroTab-' + k);
-        var m = document.getElementById('heroMini-' + k);
-        if (t) t.classList.toggle('active', k === key);
-        if (m) m.classList.toggle('active', k === key);
-      });
-      eyebrowEl.textContent = d.eyebrow;
-      document.getElementById('heroSpotTitle').textContent = d.title;
-      document.getElementById('heroSpotSummary').textContent = d.summary;
-      document.getElementById('heroSpotNum').innerHTML = d.num;
-      document.getElementById('heroSpotLabel').textContent = d.label;
-      document.getElementById('heroSpotSub').innerHTML = d.sub;
-
-      var barsEl = document.getElementById('heroSpotBars');
-      if (barsEl) {
-        barsEl.innerHTML = d.bars.map(function(b) {
-          return (
-            '<div class="spot-bar-item">' +
-              '<div class="spot-bar-top">' +
-                '<span>' + b.name + '</span>' +
-                '<span style="color:' + b.color + ';">' + b.val + '</span>' +
-              '</div>' +
-              '<div class="spot-bar-track">' +
-                '<div class="spot-bar-fill" style="width:' + b.pct + '%;background:' + b.color + ';"></div>' +
-              '</div>' +
-            '</div>'
-          );
-        }).join('');
-      }
-    }
-
-    function jumpToActiveHeroProject() {
-      jumpToProject(ACTIVE_HERO_PROJECT);
     }
 
     // =================================================================
@@ -4643,19 +4574,30 @@
       }
     };
 
+    var SCROLL_SYNC_SUPPRESS_UNTIL = 0;
+
     function activateExploreModeFor(proj) {
+      LAST_SYNCED_PROJ = proj;
+      LAST_SYNCED_STEP = 1;
+      SCROLL_SYNC_SUPPRESS_UNTIL = Date.now() + 1400;
       switchActiveProjectPane(proj, 1);
       var wb = document.getElementById('stickyWorkbench');
-      if (wb && window.innerWidth < 1120) {
+      if (wb && window.innerWidth <= 1120) {
         wb.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
     function userSelectProject(proj) {
+      LAST_SYNCED_PROJ = proj;
+      LAST_SYNCED_STEP = 1;
+      SCROLL_SYNC_SUPPRESS_UNTIL = Date.now() + 900;
       switchActiveProjectPane(proj, 1);
     }
 
     function jumpToProject(proj) {
+      LAST_SYNCED_PROJ = proj;
+      LAST_SYNCED_STEP = 1;
+      SCROLL_SYNC_SUPPRESS_UNTIL = Date.now() + 1400;
       switchActiveProjectPane(proj, 1);
       var block = document.getElementById('project-block-' + proj);
       if (block) {
@@ -4966,6 +4908,7 @@
         }
       });
       renderTransitDashboard();
+      if (typeof fitWorkbenchContentToScreen === 'function') setTimeout(fitWorkbenchContentToScreen, 10);
     }
 
     function filterTransitTier(tierKey, isUserClick) {
@@ -5330,6 +5273,7 @@
         }
       });
       renderClimAlertDashboard();
+      if (typeof fitWorkbenchContentToScreen === 'function') setTimeout(fitWorkbenchContentToScreen, 10);
     }
 
     function updateClimThresholdSim(skipLock) {
@@ -5694,6 +5638,7 @@
         }
       });
       renderTourmateDashboard();
+      if (typeof fitWorkbenchContentToScreen === 'function') setTimeout(fitWorkbenchContentToScreen, 10);
     }
 
     // =================================================================
@@ -5818,7 +5763,8 @@
     }
 
     function syncWorkbenchOnScroll() {
-      var headerH = 58;
+      var headerEl = document.querySelector('.site-header');
+      var headerH = headerEl ? headerEl.offsetHeight : 58;
       var viewportFocalY = window.innerHeight * 0.38;
       var ws = document.querySelector('.scrolly-workspace');
       var firstStepCard = document.querySelector('.narrative-step-card[data-project="transit"][data-step="1"]');
@@ -5885,6 +5831,7 @@
       // 2. Find the closest narrative step card within the active project block & apply smooth proximity opacity
       var allStepCards = document.querySelectorAll('.narrative-step-card');
       allStepCards.forEach(function(card) {
+        if (!card.classList.contains('is-inview')) return;
         var r = card.getBoundingClientRect();
         var cardMid = r.top + r.height * 0.45;
         var normDist = Math.min(1, Math.abs(cardMid - viewportFocalY) / (window.innerHeight * 0.65));
@@ -5906,15 +5853,19 @@
         }
       });
 
-      if (activeProj !== LAST_SYNCED_PROJ || bestStep !== LAST_SYNCED_STEP) {
-        LAST_SYNCED_PROJ = activeProj;
-        LAST_SYNCED_STEP = bestStep;
-        triggerStoryStep(activeProj, bestStep, false);
+      var track = document.getElementById('scrollyRightTrack');
+      var wb = document.getElementById('stickyWorkbench');
+      var mobileViewingWb = (window.innerWidth <= 1120 && wb && wb.getBoundingClientRect().top < window.innerHeight * 0.85);
+
+      if (Date.now() >= SCROLL_SYNC_SUPPRESS_UNTIL && !mobileViewingWb) {
+        if (activeProj !== LAST_SYNCED_PROJ || bestStep !== LAST_SYNCED_STEP) {
+          LAST_SYNCED_PROJ = activeProj;
+          LAST_SYNCED_STEP = bestStep;
+          triggerStoryStep(activeProj, bestStep, false);
+        }
       }
 
       // 3. Enforce rock-solid sticky/pinned positioning on desktop without ratcheting track height
-      var track = document.getElementById('scrollyRightTrack');
-      var wb = document.getElementById('stickyWorkbench');
       if (track && wb && window.innerWidth > 1120) {
         track.style.minHeight = '';
         var trackRect = track.getBoundingClientRect();
@@ -5964,10 +5915,12 @@
         return;
       }
       stage.style.zoom = '1';
+      var headerEl = document.querySelector('.site-header');
+      var headerH = headerEl ? headerEl.offsetHeight : 58;
       var h1 = document.getElementById('wbActiveWorkHeader');
       var h2 = document.querySelector('.wb-topbar');
       var chromeH = (h1 ? h1.offsetHeight : 30) + (h2 ? h2.offsetHeight : 42);
-      var availH = (window.innerHeight - 58) - chromeH - 4;
+      var availH = (window.innerHeight - headerH) - chromeH - 4;
       var naturalH = stage.scrollHeight;
       if (naturalH > availH && availH > 300) {
         var ratio = Math.max(0.74, Math.min(1, availH / naturalH));
@@ -6292,19 +6245,17 @@
         }
         var scrollY = window.scrollY || window.pageYOffset || 0;
         var vh = Math.max(600, window.innerHeight);
-        if (scrollY <= vh * 1.15) {
-          var p = Math.max(0, Math.min(1, scrollY / (vh * 0.85)));
-          var yLeft = (p * -26).toFixed(1);
-          var yRight = (p * -14).toFixed(1);
-          var fade = Math.max(0.25, 1 - p * 0.65).toFixed(3);
-          if (heroLeft) {
-            heroLeft.style.transform = 'translate3d(0,' + yLeft + 'px,0)';
-            heroLeft.style.opacity = fade;
-          }
-          if (heroRight) {
-            heroRight.style.transform = 'translate3d(0,' + yRight + 'px,0)';
-            heroRight.style.opacity = fade;
-          }
+        var p = Math.max(0, Math.min(1, scrollY / (vh * 0.85)));
+        var yLeft = (p * -26).toFixed(1);
+        var yRight = (p * -14).toFixed(1);
+        var fade = Math.max(0.25, 1 - p * 0.65).toFixed(3);
+        if (heroLeft) {
+          heroLeft.style.transform = 'translate3d(0,' + yLeft + 'px,0)';
+          heroLeft.style.opacity = fade;
+        }
+        if (heroRight) {
+          heroRight.style.transform = 'translate3d(0,' + yRight + 'px,0)';
+          heroRight.style.opacity = fade;
         }
       }
 
