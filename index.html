@@ -67,7 +67,6 @@
     }
 
     body {
-      overflow-x: clip;
       max-width: 100%;
     }
 
@@ -1172,6 +1171,7 @@
       align-items: stretch;
       position: relative;
       will-change: grid-template-columns;
+      overflow-anchor: none;
     }
 
     .scrolly-narrative-col {
@@ -1179,6 +1179,7 @@
       width: 100%;
       border-right: var(--grid-line);
       background: var(--bg-ivory);
+      overflow-anchor: none;
     }
 
     .scrolly-right-track {
@@ -2493,8 +2494,7 @@
       flex-direction: column;
       justify-content: space-between;
       transform-origin: top center;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     .dashboard-pane {
@@ -5769,33 +5769,20 @@
       var ws = document.querySelector('.scrolly-workspace');
       var firstStepCard = document.querySelector('.narrative-step-card[data-project="transit"][data-step="1"]');
 
-      // 0. Compute smooth scroll-linked column width between Pic 2 (Project 01 Header = 360px matching intro grid)
-      //    and Pic 1 (Step 01.1 Narrative Cards = 43% of workspace width)
+      // 0. Compute smooth scroll-linked column width from wsRect.top (invariant to column reflow so scroll never fights/bounces)
       if (ws && window.innerWidth > 1120) {
         var wsRect = ws.getBoundingClientRect();
         var minColPx = 360; // Matches .work-intro-grid left column (360px)
         var maxColPx = Math.max(minColPx, wsRect.width * 0.43);
 
-        // Progress t goes smoothly from 0.0 (at top of Project 01 header) to 1.0 (as Step 01.1 enters reading zone)
-        var transitionRange = 320;
-        var scrolledIntoWs = headerH + 40 - wsRect.top;
-        if (firstStepCard) {
-          var c1Rect = firstStepCard.getBoundingClientRect();
-          // When c1Rect.top is at 82% of viewport height -> t=0; when c1Rect.top reaches 46% of viewport height -> t=1
-          var startY = window.innerHeight * 0.84;
-          var endY = window.innerHeight * 0.44;
-          var rawT = (startY - c1Rect.top) / Math.max(1, startY - endY);
-          var clampedT = Math.max(0, Math.min(1, rawT));
-          // Cosine ease-in-out for natural scroll feel
-          var easedT = 0.5 - 0.5 * Math.cos(Math.PI * clampedT);
-          TARGET_LEFT_COL_PX = minColPx + (maxColPx - minColPx) * easedT;
-        } else {
-          var tFallback = Math.max(0, Math.min(1, scrolledIntoWs / transitionRange));
-          var easedFallback = 0.5 - 0.5 * Math.cos(Math.PI * tFallback);
-          TARGET_LEFT_COL_PX = minColPx + (maxColPx - minColPx) * easedFallback;
-        }
+        // Progress t goes smoothly from 0.0 (at top of Project 01 header) to 1.0 (after scrolling 340px into workspace)
+        var transitionRange = 340;
+        var scrolledIntoWs = headerH - wsRect.top;
+        var clampedT = Math.max(0, Math.min(1, scrolledIntoWs / transitionRange));
+        var easedT = 0.5 - 0.5 * Math.cos(Math.PI * clampedT);
+        TARGET_LEFT_COL_PX = minColPx + (maxColPx - minColPx) * easedT;
 
-        if (!SCROLL_RAF_ID) {
+        if (!SCROLL_RAF_ID && Math.abs(TARGET_LEFT_COL_PX - CURRENT_LEFT_COL_PX) > 0.25) {
           SCROLL_RAF_ID = requestAnimationFrame(updateSmoothLayoutFrame);
         }
 
@@ -5920,7 +5907,7 @@
       var h1 = document.getElementById('wbActiveWorkHeader');
       var h2 = document.querySelector('.wb-topbar');
       var chromeH = (h1 ? h1.offsetHeight : 30) + (h2 ? h2.offsetHeight : 42);
-      var availH = (window.innerHeight - headerH) - chromeH - 4;
+      var availH = (window.innerHeight - headerH) - chromeH - 12;
       var naturalH = stage.scrollHeight;
       if (naturalH > availH && availH > 300) {
         var ratio = Math.max(0.74, Math.min(1, availH / naturalH));
